@@ -3,16 +3,21 @@ import InputBox from "./InputBox.jsx";
 import UserProfile from "../icons/UserProfilePic.jsx";
 import socket from "../services/Socket.jsx";
 import { jwtDecode } from "jwt-decode";
-const ChatWindow = ({
-  selectedUserId,
-  chats,
-  setChats,
-  isValidChatId,
-  profileName,
-  setIsValidChatId,
-  selectedChat,
-  setSelectedChat,
-}) => {
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  chatsState,
+  isValidChatIdState,
+  profileNameState,
+  selectedChatState,
+  selectedUserIdState,
+} from "../states/atoms.jsx";
+const ChatWindow = () => {
+  const profileName = useRecoilValue(profileNameState);
+  const selectedUserId = useRecoilValue(selectedUserIdState);
+  const [selectedChat, setSelectedChat] = useRecoilState(selectedChatState);
+  const [isValidChatId, setIsValidChatId] = useRecoilState(isValidChatIdState);
+  const [chats, setChats] = useRecoilState(chatsState);
+
   const token = localStorage.getItem("token");
   const senderId = jwtDecode(token).userId;
   const messagesEndRef = useRef(null);

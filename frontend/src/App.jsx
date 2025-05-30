@@ -1,5 +1,3 @@
-// import "./App.css";
-
 import {
   BrowserRouter as Router,
   Routes,
@@ -10,11 +8,16 @@ import {
 import Layout from "./components/Layout.jsx";
 import SignUp from "./pages/SignUp.jsx";
 import Signin from "./pages/SignIn.jsx";
+import { ErrorBoundary } from "react-error-boundary";
 
+function ErrorFallback({ error }) {
+  return <div>Something went wrong: {error.message}</div>;
+}
 
 function App() {
   return (
     <>
+      {/* <ErrorBoundary FallbackComponent={ErrorFallback}> */}
       <Router>
         <Routes>
           <Route path="/" element={<Navigate to="/signup" />} />
@@ -23,6 +26,7 @@ function App() {
           <Route path="/app" element={<Layout />} />
         </Routes>
       </Router>
+      {/* </ErrorBoundary> */}
     </>
   );
 }

@@ -1,32 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import SearchBox from "./SearchBox.jsx";
 import UserProfilePic from "../icons/UserProfilePic.jsx";
 import { fetchAllChatId, fetchUsers } from "../services/userServices.jsx";
-// import { fetchChats } from "../services/chatServices.js";
 import NewChatIconWork from "./NewChatIconWork.jsx";
 import NewChatModal from "./NewChatModal.jsx";
 import { fetchChatsbyId } from "../services/chatServices.js";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  allChatIdState,
+  chatsState,
+  isModalOpenState,
+  isValidChatIdState,
+  profileNameState,
+  searchTermState,
+  selectedChatState,
+  usersState,
+} from "../states/atoms.jsx";
 import NewGroupChatModal from "./NewGroupChatModal.jsx";
 
-const Chatlist = ({
-  selectedUserId,
-  setSelectedUserId,
-  profileName,
-  setProfileName,
-  chats,
-  setChats,
-  selectedChat,
-  setSelectedChat,
-  isValidChatId,
-  setIsValidChatId,
-}) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [groupUsers, setGroupUsers] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [allChatId, setAllChatId] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+const Chatlist = () => {
+  const setProfileName = useSetRecoilState(profileNameState);
+  const [selectedChat, setSelectedChat] = useRecoilState(selectedChatState);
+  const setIsValidChatId = useSetRecoilState(isValidChatIdState);
+  const [chats, setChats] = useRecoilState(chatsState);
+  const setUsers = useSetRecoilState(usersState);
+  const [allChatId, setAllChatId] = useRecoilState(allChatIdState);
+  const [searchTerm, setSearchTerm] = useRecoilState(searchTermState);
+  const setIsModalOpen = useSetRecoilState(isModalOpenState);
+
   const senderId = jwtDecode(localStorage.getItem("token")).userId;
 
   const getUsers = async () => {
@@ -39,28 +41,26 @@ const Chatlist = ({
     }
   };
 
-  const getChatId = async () => {
-    try {
-      const data = await fetchAllChatId();
-      console.log("all chat id", data);
-
-      setAllChatId(data);
-    } catch (error) {
-      console.log("error occured while ferching the all the ChatId", error);
-    }
-  };
-
   useEffect(() => {
+    const getChatId = async () => {
+      try {
+        const data = await fetchAllChatId();
+        console.log("all chat id", data);
+        setAllChatId(data);
+      } catch (error) {
+        console.log("error occured while ferching the all the ChatId", error);
+      }
+    };
     getChatId();
-  }, [chats]);
+  }, [chats, setAllChatId]);
 
   const selectChatId = async ({ i }) => {
     setSelectedChat(i);
     setIsValidChatId(true);
     setProfileName(i.name || i.groupName);
+
     try {
       const response = await fetchChatsbyId({ chatId: i._id });
-      // console.log("chat fetch res", response);
       setChats(new Map(response.chat.map((msg) => [msg._id, msg])));
     } catch (error) {
       console.log("Error while fetching chats" + error);
@@ -88,43 +88,8 @@ const Chatlist = ({
         </div>
       </div>
 
-      <NewChatModal
-        selectedUserId={selectedUserId}
-        setSelectedUserId={setSelectedUserId}
-        profileName={profileName}
-        setProfileName={setProfileName}
-        isModalOpen={isModalOpen}
-        isGroupModalOpen={isGroupModalOpen}
-        setIsGroupModalOpen={setIsGroupModalOpen}
-        setGroupUsers={setGroupUsers}
-        setIsModalOpen={setIsModalOpen}
-        users={users}
-        // setSelectedUser={setSelectedUser}
-        setChats={setChats}
-        allChatId={allChatId}
-        isValidChatId={isValidChatId}
-        setIsValidChatId={setIsValidChatId}
-        setSelectedChat={setSelectedChat}
-        selectedChat={selectedChat}
-      />
-      <NewGroupChatModal
-        profileName={profileName}
-        setProfileName={setProfileName}
-        isGroupModalOpen={isGroupModalOpen}
-        setIsGroupModalOpen={setIsGroupModalOpen}
-        groupUsers={groupUsers}
-        setGroupUsers={setGroupUsers}
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-        users={users}
-        // setSelectedUser={setSelectedUser}
-        setChats={setChats}
-        allChatId={allChatId}
-        isValidChatId={isValidChatId}
-        setIsValidChatId={setIsValidChatId}
-        setSelectedChat={setSelectedChat}
-        selectedChat={selectedChat}
-      />
+      <NewChatModal />
+      <NewGroupChatModal />
       <div className="flex flex-row gap-2 justify-center items-center p-2 w-full">
         <SearchBox
           id={"ChatlistSearchBox"}
@@ -159,7 +124,6 @@ const Chatlist = ({
                   <div>
                     <span className="block truncate max-w-[500px]">
                       {i.userId == senderId ? i.name + " (You)" : i.name}
-                      {console.log(i.userId, senderId)}
                     </span>
                   </div>
                 )}

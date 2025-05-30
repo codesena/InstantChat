@@ -3,17 +3,16 @@ import Navigation from "./Navigation.jsx";
 import Chatlist from "./Chatlist.jsx";
 import ChatWindow from "./ChatWindow.jsx";
 import BlankWindow from "./BlankWindow.jsx";
+import { useRecoilValue } from "recoil";
+import { selectedChatState, selectedUserIdState } from "../states/atoms.jsx";
 
 const Layout = () => {
   const [chatlistWidth, setChatlistWidth] = useState(250);
-  const [isDragging, setIsDragging] = useState(false); // ✅ Track dragging
+  const [isDragging, setIsDragging] = useState(false);
   const isResizing = useRef(false);
 
-  const [selectedUserId, setSelectedUserId] = useState(null);
-  const [selectedChat, setSelectedChat] = useState(null);
-  const [profileName, setProfileName] = useState("");
-  const [isValidChatId, setIsValidChatId] = useState(false);
-  const [chats, setChats] = useState(new Map());
+  const selectedUserId = useRecoilValue(selectedUserIdState);
+  const selectedChat = useRecoilValue(selectedChatState);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
@@ -50,20 +49,8 @@ const Layout = () => {
         style={{ width: `${chatlistWidth}px` }}
         className="relative shrink-0 "
       >
-        <Chatlist
-          selectedUserId={selectedUserId}
-          setSelectedUserId={setSelectedUserId}
-          profileName={profileName}
-          setProfileName={setProfileName}
-          chats={chats}
-          setChats={setChats}
-          selectedChat={selectedChat}
-          setSelectedChat={setSelectedChat}
-          isValidChatId={isValidChatId}
-          setIsValidChatId={setIsValidChatId}
-        />
+        <Chatlist />
 
-        {/* Resizer handle */}
         <div
           className={`absolute top-0 right-0 h-full ${
             isDragging
@@ -74,24 +61,8 @@ const Layout = () => {
         />
       </div>
 
-      {/* Chat window - takes remaining space only */}
       <div className="flex-grow min-w-0 border-l border-[#1d1d1d]">
-        {selectedChat || selectedUserId ? (
-          <ChatWindow
-            selectedUserId={selectedUserId}
-            setSelectedUserId={setSelectedUserId}
-            profileName={profileName}
-            setProfileName={setProfileName}
-            chats={chats}
-            setChats={setChats}
-            selectedChat={selectedChat}
-            setSelectedChat={setSelectedChat}
-            isValidChatId={isValidChatId}
-            setIsValidChatId={setIsValidChatId}
-          />
-        ) : (
-          <BlankWindow />
-        )}
+        {selectedChat || selectedUserId ? <ChatWindow /> : <BlankWindow />}
       </div>
     </div>
   );

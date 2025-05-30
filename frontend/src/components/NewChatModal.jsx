@@ -3,23 +3,36 @@ import { fetchChatsbyId } from "../services/chatServices.js";
 import UserProfilePic from "../icons/UserProfilePic.jsx";
 import { useState, useCallback } from "react";
 import SearchBox from "./SearchBox.jsx";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  allChatIdState,
+  chatsState,
+  groupUsersState,
+  isGroupModalOpenState,
+  isModalOpenState,
+  isValidChatIdState,
+  profileNameState,
+  selectedChatState,
+  selectedUserIdState,
+  usersState,
+} from "../states/atoms.jsx";
 
-const NewChatModal = ({
-  setProfileName,
-  isModalOpen,
-  setIsGroupModalOpen,
-  setGroupUsers,
-  setIsModalOpen,
-  users,
-  setSelectedUserId,
-  setChats,
-  allChatId,
-  // selectedChat,
-  setSelectedChat,
-  setIsValidChatId,
-}) => {
+const NewChatModal = () => {
   const [userSearchTerm, setUserSearchTerm] = useState();
+
+  const users = useRecoilValue(usersState);
+  const allChatId = useRecoilValue(allChatIdState);
+  const setSelectedUserId = useSetRecoilState(selectedUserIdState);
+  const setProfileName = useSetRecoilState(profileNameState);
+  const setChats = useSetRecoilState(chatsState);
+  const setIsValidChatId = useSetRecoilState(isValidChatIdState);
+  const setSelectedChat = useSetRecoilState(selectedChatState);
+  const setIsGroupModalOpen = useSetRecoilState(isGroupModalOpenState);
+  const setGroupUsers = useSetRecoilState(groupUsersState);
+
+  const [isModalOpen, setIsModalOpen] = useRecoilState(isModalOpenState);
   // useCallback to avoid recreation
+
   const isChatIdPresent = useCallback(
     async (user) => {
       setSelectedUserId(user._id);

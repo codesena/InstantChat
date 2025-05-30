@@ -5,23 +5,35 @@ import { IoCheckboxOutline, IoSquareOutline } from "react-icons/io5";
 import UserProfilePic from "../icons/UserProfilePic.jsx";
 import { GroupCreation } from "../services/chatServices.js";
 import { jwtDecode } from "jwt-decode";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  chatsState,
+  groupUsersState,
+  isGroupModalOpenState,
+  isModalOpenState,
+  isValidChatIdState,
+  profileNameState,
+  selectedChatState,
+  usersState,
+} from "../states/atoms.jsx";
 
-const NewGroupChatModal = ({
-  setChats = { setChats },
-  setProfileName,
-  setSelectedChat,
-  setIsValidChatId,
-  setGroupUsers,
-  groupUsers,
-  isGroupModalOpen,
-  setIsGroupModalOpen,
-  setIsModalOpen,
-  users,
-}) => {
+const NewGroupChatModal = () => {
   const [groupSearchTerm, setGroupSearchTerm] = useState("");
   const [showNext, setShowNext] = useState(false);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [groupName, setGroupName] = useState("");
+
+  const setProfileName = useSetRecoilState(profileNameState);
+  const setChats = useSetRecoilState(chatsState);
+  const setIsValidChatId = useSetRecoilState(isValidChatIdState);
+  const setSelectedChat = useSetRecoilState(selectedChatState);
+  const setIsModalOpen = useSetRecoilState(isModalOpenState);
+  const users = useRecoilValue(usersState);
+
+  const [groupUsers, setGroupUsers] = useRecoilState(groupUsersState);
+  const [isGroupModalOpen, setIsGroupModalOpen] = useRecoilState(
+    isGroupModalOpenState
+  );
 
   const userId = useMemo(() => {
     try {
