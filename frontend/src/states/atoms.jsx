@@ -1,12 +1,5 @@
 import { atom } from "recoil";
 
-// const [profileName, setProfileName] = useState("");
-// const [selectedUserId, setSelectedUserId] = useState(null);
-// const [selectedChat, setSelectedChat] = useState(null);
-// const [isValidChatId, setIsValidChatId] = useState(false);
-// const [chats, setChats] = useState(new Map());
-// const [isModalOpen, setIsModalOpen] = useState(false);
-
 export const profileNameState = atom({
   key: "profileName",
   default: "",
