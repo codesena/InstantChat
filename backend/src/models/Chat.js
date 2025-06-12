@@ -12,6 +12,7 @@ const ChatSchema = new Schema(
     },
     isGroup: { type: Boolean, default: false },
     groupName: { type: String, default: null },
+    profileUrl: { type: String, default: null },
   },
   { timestamps: true }
 );

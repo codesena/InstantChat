@@ -12,10 +12,10 @@ const SignUp = router.post("/signup", async (req, res) => {
   // then db call to enter the data
   // password need to be hashed
   try {
-    const { name, email, password } = req.body;
-    console.log(name, email, password);
+    const { name, email, password, imageUrl } = req.body;
+    console.log(name, email, password, imageUrl);
     const user = await UserModel.findOne({ email });
-    console.log(user);
+    // console.log(user);
     if (user) {
       res.status(400).json({
         message: "Email already exists!",
@@ -27,6 +27,7 @@ const SignUp = router.post("/signup", async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      profileUrl: imageUrl || "",
     });
 
     res.status(200).json({
@@ -36,27 +37,6 @@ const SignUp = router.post("/signup", async (req, res) => {
     return res
       .status(500)
       .json({ message: "Internal Server Error", error: err.message });
-  }
-  const { name, email, password } = req.body;
-  console.log(name, email, password);
-  const user = await UserModel.findOne({ email });
-  console.log(user);
-  if (user) {
-    res.status(400).json({
-      message: "Email already exists!",
-    });
-    return;
-  }
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const response = await UserModel.create({
-    name,
-    email,
-    password: hashedPassword,
-  });
-  if (response) {
-    res.status(200).json({
-      message: "User Created SuccesFully!",
-    });
   }
 });
 

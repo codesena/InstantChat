@@ -22,12 +22,12 @@ const handleSocketConnection = (io) => {
         const saved = await message.save();
         io.emit("message", saved);
       } catch (err) {
-        console.error("❌ Message save error:", err);
+        console.error(" Message save error:", err);
       }
     });
 
     socket.on("disconnect", () => {
-      console.log("❌ A user disconnected");
+      console.log(" A user disconnected");
     });
   });
 };

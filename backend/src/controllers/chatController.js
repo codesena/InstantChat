@@ -2,13 +2,11 @@ import {
   accessChatbyChatId,
   createGroupChatId,
   getAllChatId,
-  getUserChats,
   storeMessage,
 } from "../services/chatService.js";
 
 async function oneOnOneChat(req, res) {
   const { chatId } = req.query;
-  // console.log("chid", typeof chatId);
   try {
     const chat = await accessChatbyChatId({ chatId });
     res.status(200).json(chat);
@@ -41,13 +39,18 @@ async function fetchAllChatId(req, res) {
 
 async function createGroup(req, res) {
   try {
-    let { users, groupName } = req.body;
+    let { users, groupName, profileUrl } = req.body;
     const admin = req.userId;
+    console.log("hi", users, groupName, profileUrl);
+
     users.push(admin);
     if (!groupName) groupName = "Unknown";
-    const response = await createGroupChatId({ users, admin, groupName });
-    console.log(users, groupName, "res:", response);
-
+    const response = await createGroupChatId({
+      users,
+      admin,
+      groupName,
+      profileUrl,
+    });
     res.status(200).json(response._id);
   } catch (error) {
     console.log(error);

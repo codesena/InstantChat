@@ -5,8 +5,14 @@ async function createChatId({ userId1, userId2 }) {
   return (await ChatModel.create({ users: [userId1, userId2] }))._id;
 }
 
-async function createGroupChatId({ users, admin, groupName }) {
-  return await ChatModel.create({ users, admin, groupName, isGroup: true });
+async function createGroupChatId({ users, admin, groupName, profileUrl }) {
+  return await ChatModel.create({
+    users,
+    admin,
+    groupName,
+    profileUrl,
+    isGroup: true,
+  });
 }
 
 async function accessChatbyChatId({ chatId }) {
@@ -36,23 +42,33 @@ const getUserChats = async (userId) => {
 const getAllChatId = async ({ userId }) => {
   try {
     const chats = await ChatModel.find({ users: userId })
-      .select("_id isGroup groupName users latestMessage admin")
-      .populate("users", "name _id")
+      .select("_id isGroup groupName users latestMessage admin profileUrl ")
+      .populate("users", "name _id profileUrl")
       .populate("latestMessage", "text");
     console.log("getallchatid", chats);
 
     const result = chats.map((chat) => {
-      const { _id, isGroup, groupName, users, latestMessage, admin } = chat;
+      const {
+        _id,
+        isGroup,
+        groupName,
+        users,
+        latestMessage,
+        admin,
+        profileUrl,
+      } = chat;
       if (!isGroup) {
-        const otherUser = users.find(
+        let otherUser = users.find(
           (user) => user._id.toString() !== userId.toString()
         );
+        if (users[0] === users[1]) otherUser = users[0];
         if (otherUser)
           return {
             _id,
             isGroup,
             name: otherUser.name,
             userId: otherUser._id,
+            profileUrl: otherUser.profileUrl,
             text: latestMessage?.text,
           };
       }
@@ -62,6 +78,7 @@ const getAllChatId = async ({ userId }) => {
         groupName,
         admin,
         users,
+        profileUrl,
         text: latestMessage?.text,
       };
     });
