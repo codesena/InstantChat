@@ -1,5 +1,15 @@
 import { atom } from "recoil";
 
+export const loggedInUserState = atom({
+  key: "loggedInUser",
+  default: {
+    userId: "",
+    name: "",
+    email: "",
+    profileUrl: "",
+  },
+});
+
 export const selectedProfileState = atom({
   key: "selectedProfile",
   default: {
@@ -8,7 +18,7 @@ export const selectedProfileState = atom({
     chatId: "",
   },
 });
-    
+
 export const selectedUserIdState = atom({
   key: "selectedUserId",
   default: null,
