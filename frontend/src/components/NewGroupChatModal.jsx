@@ -12,8 +12,7 @@ import {
   isGroupModalOpenState,
   isModalOpenState,
   isValidChatIdState,
-  profileNameState,
-  selectedChatState,
+  selectedProfileState,
   usersState,
 } from "../states/atoms.jsx";
 
@@ -23,10 +22,9 @@ const NewGroupChatModal = () => {
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [groupName, setGroupName] = useState("");
 
-  const setProfileName = useSetRecoilState(profileNameState);
+  const setSelectedProfile = useSetRecoilState(selectedProfileState);
   const setChats = useSetRecoilState(chatsState);
   const setIsValidChatId = useSetRecoilState(isValidChatIdState);
-  const setSelectedChat = useSetRecoilState(selectedChatState);
   const setIsModalOpen = useSetRecoilState(isModalOpenState);
   const users = useRecoilValue(usersState);
 
@@ -78,7 +76,6 @@ const NewGroupChatModal = () => {
     setIsModalOpen(true);
   }, [setIsGroupModalOpen, setIsModalOpen]);
 
-  // Filter users once
   const filteredUsers = useMemo(() => {
     return users
       .filter((user) => user._id !== userId)
@@ -162,8 +159,11 @@ const NewGroupChatModal = () => {
                     setIsModalOpen(false);
                     setIsValidChatId(true);
                     setIsGroupModalOpen(false);
-                    setSelectedChat({ _id: res });
-                    setProfileName(groupName || "Unknown");
+                    setSelectedProfile((prev) => ({
+                      ...prev,
+                      profileName: groupName || "Unknown",
+                      chatId: res,
+                    }));
                     setChats(new Map());
                   }}
                 >
@@ -187,7 +187,15 @@ const NewGroupChatModal = () => {
                     onClick={() => toggleUser(user._id)}
                   >
                     <div className="flex flex-row items-center gap-2">
-                      <UserProfilePic size="36" />
+                      {user?.profileUrl ? (
+                        <img
+                          src={user.profileUrl}
+                          alt="Avatar"
+                          className="w-10 h-10 rounded-full object-cover border border-gray-500"
+                        />
+                      ) : (
+                        <UserProfilePic size="36" />
+                      )}
                       <span>{user.name}</span>
                     </div>
                     {isUserSelected(user._id) ? (

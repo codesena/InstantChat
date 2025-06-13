@@ -1,17 +1,16 @@
 import { atom } from "recoil";
 
-export const profileNameState = atom({
-  key: "profileName",
-  default: "",
+export const selectedProfileState = atom({
+  key: "selectedProfile",
+  default: {
+    profileName: "",
+    profileUrl: "",
+    chatId: "",
+  },
 });
-
+    
 export const selectedUserIdState = atom({
   key: "selectedUserId",
-  default: null,
-});
-
-export const selectedChatState = atom({
-  key: "selectedChat",
   default: null,
 });
 

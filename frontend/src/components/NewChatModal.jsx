@@ -11,33 +11,28 @@ import {
   isGroupModalOpenState,
   isModalOpenState,
   isValidChatIdState,
-  profileNameState,
-  selectedChatState,
+  selectedProfileState,
   selectedUserIdState,
   usersState,
 } from "../states/atoms.jsx";
 
 const NewChatModal = () => {
   const [userSearchTerm, setUserSearchTerm] = useState();
-
   const users = useRecoilValue(usersState);
   const allChatId = useRecoilValue(allChatIdState);
   const setSelectedUserId = useSetRecoilState(selectedUserIdState);
-  const setProfileName = useSetRecoilState(profileNameState);
   const setChats = useSetRecoilState(chatsState);
   const setIsValidChatId = useSetRecoilState(isValidChatIdState);
-  const setSelectedChat = useSetRecoilState(selectedChatState);
   const setIsGroupModalOpen = useSetRecoilState(isGroupModalOpenState);
   const setGroupUsers = useSetRecoilState(groupUsersState);
-
   const [isModalOpen, setIsModalOpen] = useRecoilState(isModalOpenState);
-  // useCallback to avoid recreation
+  const setSelectedProfile = useSetRecoilState(selectedProfileState);
 
   const isChatIdPresent = useCallback(
     async (user) => {
       setSelectedUserId(user._id);
       setIsModalOpen(false);
-      setProfileName(user.name);
+      setSelectedProfile((prev) => ({ ...prev, profileName: user.name }));
 
       let foundChat = null;
       for (const element of allChatId) {
@@ -51,7 +46,11 @@ const NewChatModal = () => {
         setIsValidChatId(false);
         setChats(new Map());
       } else {
-        setSelectedChat(foundChat);
+        setSelectedProfile((prev) => ({
+          ...prev,
+          chatId: foundChat._id,
+          profileUrl: foundChat?.profileUrl || "",
+        }));
         setIsValidChatId(true);
         try {
           const response = await fetchChatsbyId({ chatId: foundChat._id });
@@ -67,8 +66,7 @@ const NewChatModal = () => {
       setChats,
       setIsModalOpen,
       setIsValidChatId,
-      setProfileName,
-      setSelectedChat,
+      setSelectedProfile,
       setSelectedUserId,
     ]
   );
@@ -118,7 +116,15 @@ const NewChatModal = () => {
                   onClick={() => isChatIdPresent(user)}
                 >
                   <div className="flex flex-row items-center gap-2">
-                    <UserProfilePic size="36" />
+                    {user?.profileUrl ? (
+                      <img
+                        src={user.profileUrl}
+                        alt="Avatar"
+                        className="w-10 h-10 rounded-full object-cover border border-gray-500"
+                      />
+                    ) : (
+                      <UserProfilePic size="36" />
+                    )}
                     <span>{user.name}</span>
                   </div>
                 </li>

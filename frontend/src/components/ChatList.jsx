@@ -12,16 +12,15 @@ import {
   chatsState,
   isModalOpenState,
   isValidChatIdState,
-  profileNameState,
   searchTermState,
-  selectedChatState,
+  selectedProfileState,
   usersState,
 } from "../states/atoms.jsx";
 import NewGroupChatModal from "./NewGroupChatModal.jsx";
 
-const Chatlist = () => {
-  const setProfileName = useSetRecoilState(profileNameState);
-  const [selectedChat, setSelectedChat] = useRecoilState(selectedChatState);
+const ChatList = () => {
+  const [selectedProfile, setSelectedProfile] =
+    useRecoilState(selectedProfileState);
   const setIsValidChatId = useSetRecoilState(isValidChatIdState);
   const [chats, setChats] = useRecoilState(chatsState);
   const setUsers = useSetRecoilState(usersState);
@@ -34,7 +33,6 @@ const Chatlist = () => {
   const getUsers = async () => {
     try {
       const data = await fetchUsers();
-      console.log(data);
       setUsers(() => data);
     } catch (err) {
       console.error("Error in fetching users:", err);
@@ -45,20 +43,21 @@ const Chatlist = () => {
     const getChatId = async () => {
       try {
         const data = await fetchAllChatId();
-        console.log("all chat id", data);
         setAllChatId(data);
       } catch (error) {
-        console.log("error occured while ferching the all the ChatId", error);
+        console.log("Error fetching all Chat IDs", error);
       }
     };
     getChatId();
   }, [chats, setAllChatId]);
 
   const selectChatId = async ({ i }) => {
-    setSelectedChat(i);
     setIsValidChatId(true);
-    setProfileName(i.name || i.groupName);
-
+    setSelectedProfile((prev) => ({
+      ...prev,
+      profileName: i.name || i.groupName,
+      chatId: i._id,
+    }));
     try {
       const response = await fetchChatsbyId({ chatId: i._id });
       setChats(new Map(response.chat.map((msg) => [msg._id, msg])));
@@ -73,16 +72,14 @@ const Chatlist = () => {
   };
 
   return (
-    <div className="h-screen bg-[#181818]  flex flex-col">
-      <div className="flex flex-row items-center justify-between m-2 px-3 ">
-        <div className=" text-white text-xl font-bold">InstantChat</div>
+    <div className="h-screen bg-[#181818] flex flex-col border-r border-[#2e2e2e]">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[#2e2e2e]">
+        <div className="text-white text-xl font-bold tracking-wide">
+          InstantChat
+        </div>
         <div className="relative group">
           <NewChatIconWork onClick={openNewChatModal} />
-          <div
-            className="absolute left-1/2 -translate-x-1/2 mb-2 w-18 text-center 
-                   bg-[#181818] text-xs rounded p-2 border-1 border-black opacity-0 
-                  group-hover:opacity-100 transition-opacity delay-100 z-10"
-          >
+          <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-20 text-center bg-black text-xs text-white rounded-md py-1 px-2 border border-gray-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
             New Chat
           </div>
         </div>
@@ -90,15 +87,16 @@ const Chatlist = () => {
 
       <NewChatModal />
       <NewGroupChatModal />
-      <div className="flex flex-row gap-2 justify-center items-center p-2 w-full">
+
+      <div className="px-4 py-2">
         <SearchBox
-          id={"ChatlistSearchBox"}
+          id="ChatlistSearchBox"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
-      <div className="flex-grow overflow-auto p-2 space-y-2">
+      <div className="flex-grow overflow-y-auto px-2 space-y-2 scrollbar-thin scrollbar-thumb-[#333] scrollbar-track-transparent">
         {allChatId
           ?.filter((i) => {
             const name = i.isGroup ? i.groupName : i.name;
@@ -107,29 +105,33 @@ const Chatlist = () => {
           .map((i) => (
             <div
               key={i._id}
-              className={`flex items-center gap-4 p-2 ${
-                selectedChat?._id === i._id
-                  ? "bg-[#515151]"
-                  : "bg-[#181818] hover:bg-[#383838]"
-              } rounded-lg`}
               onClick={() => selectChatId({ i })}
+              className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 cursor-pointer ${
+                selectedProfile?.chatId === i._id
+                  ? "bg-[#2f2f2f]"
+                  : "hover:bg-[#2a2a2a] bg-[#181818]"
+              }`}
             >
-              <UserProfilePic />
-              <div className="min-w-0">
-                {i.isGroup ? (
-                  <span className="block truncate max-w-[500px]">
-                    {i.groupName}
-                  </span>
-                ) : (
-                  <div>
-                    <span className="block truncate max-w-[500px]">
-                      {i.userId == senderId ? i.name + " (You)" : i.name}
-                    </span>
-                  </div>
-                )}
-                <div className="text-[14px] truncate max-w-[500px]">
+              {i?.profileUrl ? (
+                <img
+                  src={i.profileUrl}
+                  alt="Avatar"
+                  className="w-10 h-10 rounded-full object-cover border border-gray-600"
+                />
+              ) : (
+                <UserProfilePic />
+              )}
+              <div className="min-w-0 text-white">
+                <span className="block font-medium truncate max-w-[200px]">
+                  {i.isGroup
+                    ? i.groupName
+                    : i.userId === senderId
+                    ? `${i.name} (You)`
+                    : i.name}
+                </span>
+                <span className="block text-sm text-gray-400 truncate max-w-[200px]">
                   {i?.text}
-                </div>
+                </span>
               </div>
             </div>
           ))}
@@ -138,4 +140,4 @@ const Chatlist = () => {
   );
 };
 
-export default Chatlist;
+export default ChatList;

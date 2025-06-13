@@ -1,20 +1,20 @@
 import React, { useEffect, useRef } from "react";
 import InputBox from "./InputBox.jsx";
-import UserProfile from "../icons/UserProfilePic.jsx";
 import socket from "../services/Socket.jsx";
 import { jwtDecode } from "jwt-decode";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   chatsState,
   isValidChatIdState,
-  profileNameState,
-  selectedChatState,
+  selectedProfileState,
   selectedUserIdState,
 } from "../states/atoms.jsx";
+import UserProfilePic from "../icons/UserProfilePic.jsx";
+
 const ChatWindow = () => {
-  const profileName = useRecoilValue(profileNameState);
+  const [selectedProfile, setSelectedProfile] =
+    useRecoilState(selectedProfileState);
   const selectedUserId = useRecoilValue(selectedUserIdState);
-  const [selectedChat, setSelectedChat] = useRecoilState(selectedChatState);
   const [isValidChatId, setIsValidChatId] = useRecoilState(isValidChatIdState);
   const [chats, setChats] = useRecoilState(chatsState);
 
@@ -31,7 +31,7 @@ const ChatWindow = () => {
       createdAt: new Date().toISOString(),
     };
 
-    if (isValidChatId) newMessage.chatId = selectedChat._id;
+    if (isValidChatId) newMessage.chatId = selectedProfile.chatId;
     else newMessage.receiverId = selectedUserId;
 
     setChats((prevChats) => {
@@ -57,7 +57,10 @@ const ChatWindow = () => {
   useEffect(() => {
     const handleReceiverMessage = ({ _id: oldMessageId, storedNewMessage }) => {
       if (!isValidChatId) {
-        setSelectedChat({ _id: storedNewMessage.chatId });
+        setSelectedProfile((prev) => ({
+          ...prev,
+          chatId: storedNewMessage.chatId,
+        }));
         setIsValidChatId(true);
       }
       setChats((prev) => {
@@ -66,45 +69,59 @@ const ChatWindow = () => {
         newMap.delete(oldMessageId);
         return newMap;
       });
-      console.log("storedNewMessage", storedNewMessage);
     };
 
     socket.on("receiverMessage", handleReceiverMessage);
     return () => {
       socket.off("receiverMessage", handleReceiverMessage);
     };
-  }); // subscribe once on mount
+  });
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chats]);
 
   return (
-    <div className="h-screen bg-[#1f1f1f] flex flex-col relative">
-      {/* Chat Header */}
-      <div className="flex items-center gap-4 bg-[#181818] h-[72px] pl-10 text-xl font-bold">
-        <div className="flex items-center h-16">
-          <UserProfile />
+    <div className="h-screen bg-[#1f1f1f] flex flex-col">
+      <div className="flex items-center gap-4 px-6 bg-[#181818] h-[72px] border-b border-[#2e2e2e] shadow-sm">
+        <div className="flex items-center">
+          {selectedProfile.profileUrl ? (
+            <img
+              src={selectedProfile.profileUrl}
+              alt="Avatar"
+              className="w-10 h-10 rounded-full object-cover border border-gray-600"
+            />
+          ) : (
+            <UserProfilePic size="36" />
+          )}
         </div>
-        <div>{profileName}</div>
+        <div className="text-white text-lg font-semibold truncate max-w-[70%]">
+          {selectedProfile.profileName}
+        </div>
       </div>
 
       <div
-        className="overflow-auto pl-8 pr-8 pt-1 pb-1"
+        className="flex-grow overflow-y-auto px-6 py-2 scrollbar-thin scrollbar-thumb-[#333] scrollbar-track-transparent"
         style={{ height: "calc(100vh - 72px - 60px)" }}
       >
         {[...chats.values()].map(
           ({ _id, senderId: sender, chatId: currentChatId, text, createdAt }) =>
-            selectedChat?._id === currentChatId ? (
+            selectedProfile?.chatId === currentChatId && (
               <div
                 key={_id}
-                className={`${
+                className={`mb-2 ${
                   sender === senderId ? "text-right" : "text-left"
                 }`}
               >
-                <div className="bg-[#00483a] text-white rounded-2xl py-2 px-4 m-1 inline-block max-w-[70%] break-words">
+                <div
+                  className={`inline-block px-4 py-2 rounded-2xl max-w-[75%] break-words text-sm ${
+                    sender === senderId
+                      ? "bg-[#00483a] text-white"
+                      : "bg-[#2e2e2e] text-gray-200"
+                  }`}
+                >
                   <div>{text}</div>
-                  <div className="text-xs mt-1 text-gray-300 text-right">
+                  <div className="text-[11px] mt-1 text-gray-400 text-right">
                     {new Date(createdAt).toLocaleTimeString([], {
                       hour: "numeric",
                       minute: "2-digit",
@@ -112,12 +129,12 @@ const ChatWindow = () => {
                   </div>
                 </div>
               </div>
-            ) : null
+            )
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="flex flex-row content-center items-center sticky bottom-0 w-full h-[60px] bg-[#303030]">
+      <div className="h-[60px] bg-[#2c2c2c] px-4 py-2 border-t border-[#2e2e2e]">
         <InputBox onSend={sendMessage} />
       </div>
     </div>
