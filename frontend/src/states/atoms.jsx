@@ -51,7 +51,7 @@ export const usersState = atom({
 
 export const allChatIdState = atom({
   key: "allChatId",
-  default: null,
+  default: [],
 });
 
 export const searchTermState = atom({
