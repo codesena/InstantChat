@@ -41,12 +41,24 @@ const Layout = () => {
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
-      <div className="w-[50px] bg-[#141414] shrink-0 border-r border-[#1f1f1f] shadow-md">
+      <div className="block [@media(max-width:400px)]:hidden w-[50px] bg-[#141414] shrink-0 border-r border-[#1f1f1f] shadow-md">
         <Navigation />
       </div>
+
       <div
-        style={{ width: `${chatlistWidth}px` }}
-        className="relative shrink-0 bg-[#1a1a1a] border-r border-[#2a2a2a] shadow-inner"
+        style={{
+          width:
+            window.innerWidth >= 640 || selectedProfile.chatId || selectedUserId
+              ? `${chatlistWidth}px`
+              : undefined,
+        }}
+        className={`relative shrink-0 min-w-[265px] bg-[#1a1a1a] border-r border-[#2a2a2a] shadow-inner
+    ${selectedProfile.chatId || selectedUserId ? "hidden sm:block" : "block"}
+    ${
+      selectedProfile.chatId || selectedUserId
+        ? "sm:w-[250px]"
+        : "w-full sm:w-[250px]"
+    }`}
       >
         <ChatList />
         <div
@@ -58,7 +70,12 @@ const Layout = () => {
           onMouseDown={handleMouseDown}
         />
       </div>
-      <div className="flex-grow min-w-0 bg-[#121212]">
+
+      <div
+        className={`flex-grow min-w-0 bg-[#121212] ${
+          selectedProfile.chatId || selectedUserId ? "block" : "hidden"
+        } sm:block`}
+      >
         {selectedProfile.chatId || selectedUserId ? (
           <ChatWindow />
         ) : (
