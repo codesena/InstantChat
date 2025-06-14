@@ -98,44 +98,45 @@ const ChatList = () => {
       </div>
 
       <div className="flex-grow overflow-y-auto px-2 space-y-2 scrollbar-thin scrollbar-thumb-[#333] scrollbar-track-transparent">
-        {allChatId
-          ?.filter((i) => {
-            const name = i.isGroup ? i.groupName : i.name;
-            return name?.toLowerCase().includes(searchTerm.toLowerCase());
-          })
-          .map((i) => (
-            <div
-              key={i._id}
-              onClick={() => selectChatId({ i })}
-              className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 cursor-pointer ${
-                selectedProfile?.chatId === i._id
-                  ? "bg-[#2f2f2f]"
-                  : "hover:bg-[#2a2a2a] bg-[#181818]"
-              }`}
-            >
-              {i?.profileUrl ? (
-                <img
-                  src={i.profileUrl}
-                  alt="Avatar"
-                  className="w-10 h-10 rounded-full object-cover border border-gray-600"
-                />
-              ) : (
-                <UserProfilePic />
-              )}
-              <div className="min-w-0 text-white">
-                <span className="block font-medium truncate max-w-[200px]">
-                  {i.isGroup
-                    ? i.groupName
-                    : i.userId === senderId
-                    ? `${i.name} (You)`
-                    : i.name}
-                </span>
-                <span className="block text-sm text-gray-400 truncate max-w-[200px]">
-                  {i?.text}
-                </span>
+        {Array.isArray(allChatId) &&
+          allChatId
+            ?.filter((i) => {
+              const name = i.isGroup ? i.groupName : i.name;
+              return name?.toLowerCase().includes(searchTerm.toLowerCase());
+            })
+            .map((i) => (
+              <div
+                key={i._id}
+                onClick={() => selectChatId({ i })}
+                className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 cursor-pointer ${
+                  selectedProfile?.chatId === i._id
+                    ? "bg-[#2f2f2f]"
+                    : "hover:bg-[#2a2a2a] bg-[#181818]"
+                }`}
+              >
+                {i?.profileUrl ? (
+                  <img
+                    src={i.profileUrl}
+                    alt="Avatar"
+                    className="w-10 h-10 rounded-full object-cover border border-gray-600"
+                  />
+                ) : (
+                  <UserProfilePic />
+                )}
+                <div className="min-w-0 text-white">
+                  <span className="block font-medium truncate max-w-[200px]">
+                    {i.isGroup
+                      ? i.groupName
+                      : i.userId === senderId
+                      ? `${i.name} (You)`
+                      : i.name}
+                  </span>
+                  <span className="block text-sm text-gray-400 truncate max-w-[200px]">
+                    {i?.text}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
       </div>
     </div>
   );

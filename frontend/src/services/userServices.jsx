@@ -7,7 +7,6 @@ export const fetchUsers = async () => {
 
 export const fetchAllChatId = async () => {
   const res = await api.get("/fetchallchatid");
-  console.log(res);
   return res.data;
 };
 
@@ -18,7 +17,5 @@ export const fetchParticularUsers = async (searchText = "") => {
 
 export const loggedInUserDetails = async () => {
   const res = await api.get("users/me");
-  // console.log(res.data);
-
   return res.data;
 };
