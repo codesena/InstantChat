@@ -12,8 +12,8 @@ const SignUp = router.post("/signup", async (req, res) => {
   // then db call to enter the data
   // password need to be hashed
   try {
-    const { name, email, password, imageUrl } = req.body;
-    console.log(name, email, password, imageUrl);
+    const { name, email, password, profileUrl } = req.body;
+    console.log(name, email, password, profileUrl);
     const user = await UserModel.findOne({ email });
     // console.log(user);
     if (user) {
@@ -27,7 +27,7 @@ const SignUp = router.post("/signup", async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      profileUrl: imageUrl || "",
+      profileUrl: profileUrl || "",
     });
 
     res.status(200).json({

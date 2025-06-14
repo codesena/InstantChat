@@ -20,10 +20,8 @@ function SignUp() {
 
   const handleAvatarUpload = async (e) => {
     setUploading(true);
-    const url = await handleImageUpload(e);
-    if (url) {
-      setFormData((prev) => ({ ...prev, profileUrl: url }));
-    }
+    const profileUrl = await handleImageUpload(e);
+    if (profileUrl) setFormData((prev) => ({ ...prev, profileUrl }));
     setUploading(false);
   };
 
@@ -104,8 +102,13 @@ function SignUp() {
           <button
             type="submit"
             disabled={uploading}
-            className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg text-lg font-semibold"
+            className={`w-full flex justify-center items-center gap-2 bg-green-500 text-white py-2 rounded-lg text-lg font-semibold transition-opacity duration-300 ${
+              uploading ? "hover:cursor-not-allowed" : "hover:cursor-pointer"
+            }`}
           >
+            {uploading && (
+              <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            )}
             Sign Up
           </button>
 

@@ -15,7 +15,6 @@ export const handleImageUpload = async (e) => {
     );
     if (!res.ok) throw new Error("Upload failed");
     const imageUrl = (await res.json()).secure_url;
-    console.log("url", imageUrl);
     return imageUrl;
   } catch (err) {
     console.error("Upload Error:", err);
