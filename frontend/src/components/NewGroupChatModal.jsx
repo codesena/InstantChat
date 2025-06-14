@@ -49,7 +49,7 @@ const NewGroupChatModal = () => {
   const toggleUser = useCallback(
     (id) => {
       if (isUserSelected(id)) {
-        setGroupUsers(groupUsers.filter((userId) => userId !== id));
+        setGroupUsers(groupUsers?.filter((userId) => userId !== id));
       } else {
         setGroupUsers([...groupUsers, id]);
       }
@@ -78,8 +78,8 @@ const NewGroupChatModal = () => {
 
   const filteredUsers = useMemo(() => {
     return users
-      .filter((user) => user._id !== userId)
-      .filter((user) =>
+      ?.filter((user) => user._id !== userId)
+      ?.filter((user) =>
         groupSearchTerm
           ? user.name.toLowerCase().includes(groupSearchTerm.toLowerCase())
           : true
@@ -180,7 +180,7 @@ const NewGroupChatModal = () => {
 
             {!showCreateGroup && (
               <ul className="relative space-y-1.5 max-h-96 overflow-auto">
-                {filteredUsers.map((user) => (
+                {filteredUsers?.map((user) => (
                   <li
                     key={user._id}
                     className="p-2 rounded hover:bg-[#383838] cursor-pointer flex items-center justify-between"

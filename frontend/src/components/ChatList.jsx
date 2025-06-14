@@ -57,6 +57,7 @@ const ChatList = () => {
       ...prev,
       profileName: i.name || i.groupName,
       chatId: i._id,
+      profileUrl: i.profileUrl,
     }));
     try {
       const response = await fetchChatsbyId({ chatId: i._id });

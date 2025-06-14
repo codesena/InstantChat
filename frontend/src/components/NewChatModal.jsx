@@ -11,6 +11,7 @@ import {
   isGroupModalOpenState,
   isModalOpenState,
   isValidChatIdState,
+  loggedInUserState,
   selectedProfileState,
   selectedUserIdState,
   usersState,
@@ -27,12 +28,17 @@ const NewChatModal = () => {
   const setGroupUsers = useSetRecoilState(groupUsersState);
   const [isModalOpen, setIsModalOpen] = useRecoilState(isModalOpenState);
   const setSelectedProfile = useSetRecoilState(selectedProfileState);
+  const loggedInUser = useRecoilValue(loggedInUserState);
 
   const isChatIdPresent = useCallback(
     async (user) => {
       setSelectedUserId(user._id);
       setIsModalOpen(false);
-      setSelectedProfile((prev) => ({ ...prev, profileName: user.name }));
+      setSelectedProfile((prev) => ({
+        ...prev,
+        profileName: user.name,
+        profileUrl: user.profileUrl,
+      }));
 
       let foundChat = null;
       for (const element of allChatId) {
@@ -72,7 +78,7 @@ const NewChatModal = () => {
   );
 
   // Filter users based on search term to avoid rerender filtering on every render
-  const filteredUsers = users.filter(
+  const filteredUsers = users?.filter(
     (user) =>
       !userSearchTerm ||
       user.name.toLowerCase().includes(userSearchTerm.toLowerCase())
@@ -109,7 +115,7 @@ const NewChatModal = () => {
                 <UserProfilePic size="36" />
                 <div>New Group</div>
               </li>
-              {filteredUsers.map((user) => (
+              {filteredUsers?.map((user) => (
                 <li
                   key={user._id}
                   className="p-2 rounded hover:bg-[#383838] cursor-pointer"
@@ -125,7 +131,11 @@ const NewChatModal = () => {
                     ) : (
                       <UserProfilePic size="36" />
                     )}
-                    <span>{user.name}</span>
+                    {loggedInUser.userId === user._id ? (
+                      <span>{user.name} (You)</span>
+                    ) : (
+                      <span>{user.name}</span>
+                    )}
                   </div>
                 </li>
               ))}

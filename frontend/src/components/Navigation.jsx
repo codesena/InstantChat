@@ -15,13 +15,12 @@ const Navigation = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       const user = await loggedInUserDetails();
-      setLoggedInUser((prev) => ({
-        ...prev,
+      setLoggedInUser({
         name: user.name,
         userId: user._id,
         email: user.email,
         profileUrl: user.profileUrl,
-      }));
+      });
     };
     fetchUserDetails();
   }, [setLoggedInUser]);
