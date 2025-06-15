@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { TfiMenu } from "react-icons/tfi";
 import { MdOutlineMessage } from "react-icons/md";
 import { IoSearchOutline } from "react-icons/io5";
@@ -6,12 +6,12 @@ import { IoIosStarOutline } from "react-icons/io";
 import { CiSettings } from "react-icons/ci";
 import UserProfilePic from "../icons/UserProfilePic.jsx";
 import { loggedInUserDetails } from "../services/userServices.jsx";
-import { useRecoilState } from "recoil";
-import { loggedInUserState } from "../states/atoms.jsx";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { loggedInUserState, openSettingState } from "../states/atoms.jsx";
 
 const Navigation = () => {
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
-
+  const setOpenSetting = useSetRecoilState(openSettingState);
   useEffect(() => {
     const fetchUserDetails = async () => {
       const user = await loggedInUserDetails();
@@ -26,22 +26,30 @@ const Navigation = () => {
   }, [setLoggedInUser]);
   return (
     <div className="flex flex-col justify-between items-center h-full py-4 bg-[#1a1a1a] border-r border-[#2e2e2e]">
-      <div className="flex flex-col items-center gap-6">
-        <NavIcon icon={<TfiMenu size={22} />} />
-        <NavIcon icon={<MdOutlineMessage size={22} />} />
-        <NavIcon icon={<IoSearchOutline size={22} />} />
-        <NavIcon icon={<IoIosStarOutline size={22} />} />
+      <div className="flex flex-col items-center gap-6 mb-6">
+        <NavIcon icon={<TfiMenu size={28} />} />
+        <NavIcon icon={<MdOutlineMessage size={28} />} />
+        <NavIcon icon={<IoSearchOutline size={28} />} />
+        <NavIcon icon={<IoIosStarOutline size={28} />} />
       </div>
       <div className="flex flex-col items-center gap-6 mb-2">
-        <NavIcon icon={<CiSettings size={22} />} />
+        <NavIcon
+          icon={
+            <CiSettings
+              size={28}
+              onClick={() => setOpenSetting(true)}
+              className="z-20"
+            />
+          }
+        />
         {loggedInUser.profileUrl ? (
           <img
             src={loggedInUser.profileUrl}
             alt="Avatar"
-            className="w-10 h-10 rounded-full object-cover border border-gray-500"
+            className="w-8 h-8 rounded-full object-cover border border-gray-500"
           />
         ) : (
-          <UserProfilePic size="36" />
+          <UserProfilePic size="32" />
         )}
       </div>
     </div>

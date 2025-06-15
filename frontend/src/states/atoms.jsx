@@ -70,6 +70,16 @@ export const tokenState = atom({
 });
 
 export const tokenLoadedState = atom({
-  key: "tokenLoadedState",
+  key: "tokenLoadedAtom",
+  default: false,
+});
+
+export const openSettingState = atom({
+  key: "openSettingAtom",
+  default: false,
+});
+
+export const openProfileState = atom({
+  key: "openProfileAtom",
   default: false,
 });

@@ -4,7 +4,14 @@ import ChatList from "./ChatList.jsx";
 import ChatWindow from "./ChatWindow.jsx";
 import BlankWindow from "./BlankWindow.jsx";
 import { useRecoilValue } from "recoil";
-import { selectedProfileState, selectedUserIdState } from "../states/atoms.jsx";
+import {
+  openProfileState,
+  openSettingState,
+  selectedProfileState,
+  selectedUserIdState,
+} from "../states/atoms.jsx";
+import SettingsModal from "./SettingModal.jsx";
+import ProfileModal from "./ProfileModal.jsx";
 
 const Layout = () => {
   const [chatlistWidth, setChatlistWidth] = useState(250);
@@ -12,6 +19,8 @@ const Layout = () => {
   const isResizing = useRef(false);
   const selectedUserId = useRecoilValue(selectedUserIdState);
   const selectedProfile = useRecoilValue(selectedProfileState);
+  const openSetting = useRecoilValue(openSettingState);
+  const openProfile = useRecoilValue(openProfileState);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
@@ -41,7 +50,7 @@ const Layout = () => {
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
-      <div className="block [@media(max-width:400px)]:hidden w-[50px] bg-[#141414] shrink-0 border-r border-[#1f1f1f] shadow-md">
+      <div className="block [@media(max-width:400px)]:hidden w-[60px] bg-[#141414] shrink-0 border-r border-[#1f1f1f] shadow-md">
         <Navigation />
       </div>
 
@@ -82,6 +91,9 @@ const Layout = () => {
           <BlankWindow />
         )}
       </div>
+
+      {openSetting && <SettingsModal />}
+      {openProfile && <ProfileModal />}
     </div>
   );
 };
