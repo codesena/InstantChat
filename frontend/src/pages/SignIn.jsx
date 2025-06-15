@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/auth.jsx";
+import { useSetRecoilState } from "recoil";
+import { tokenState } from "../states/atoms.jsx";
 
 function SignIn() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
+  const setToken = useSetRecoilState(tokenState);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -20,6 +22,7 @@ function SignIn() {
       if (formData.email && formData.password) {
         const res = await loginUser(formData);
         const token = res.data.token;
+        setToken(token);
         localStorage.setItem("token", token);
         navigate("/app");
       } else {
@@ -67,7 +70,7 @@ function SignIn() {
           </button>
 
           <div className="text-center text-sm mt-2">
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <button
               onClick={(e) => {
                 e.preventDefault();

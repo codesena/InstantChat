@@ -6,7 +6,7 @@ import { fetchAllChatId, fetchUsers } from "../services/userServices.jsx";
 import NewChatIconWork from "./NewChatIconWork.jsx";
 import NewChatModal from "./NewChatModal.jsx";
 import { fetchChatsbyId } from "../services/chatServices.js";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   allChatIdState,
   chatsState,
@@ -14,6 +14,7 @@ import {
   isValidChatIdState,
   searchTermState,
   selectedProfileState,
+  tokenState,
   usersState,
 } from "../states/atoms.jsx";
 import NewGroupChatModal from "./NewGroupChatModal.jsx";
@@ -27,8 +28,8 @@ const ChatList = () => {
   const [allChatId, setAllChatId] = useRecoilState(allChatIdState);
   const [searchTerm, setSearchTerm] = useRecoilState(searchTermState);
   const setIsModalOpen = useSetRecoilState(isModalOpenState);
-
-  const senderId = jwtDecode(localStorage.getItem("token")).userId;
+  const token = useRecoilValue(tokenState);
+  const senderId = jwtDecode(token)?.userId;
 
   const getUsers = async () => {
     try {

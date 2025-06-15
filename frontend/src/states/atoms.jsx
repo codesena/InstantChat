@@ -1,7 +1,7 @@
 import { atom } from "recoil";
 
 export const loggedInUserState = atom({
-  key: "loggedInUser",
+  key: "loggedInUserAtom",
   default: {
     userId: "",
     name: "",
@@ -11,7 +11,7 @@ export const loggedInUserState = atom({
 });
 
 export const selectedProfileState = atom({
-  key: "selectedProfile",
+  key: "selectedProfileAtom",
   default: {
     profileName: "",
     profileUrl: "",
@@ -20,46 +20,56 @@ export const selectedProfileState = atom({
 });
 
 export const selectedUserIdState = atom({
-  key: "selectedUserId",
+  key: "selectedUserIdAtom",
   default: null,
 });
 
 export const isValidChatIdState = atom({
-  key: "isValidChatId",
+  key: "isValidChatIdAtom",
   default: false,
 });
 
 export const chatsState = atom({
-  key: "chats",
+  key: "chatsAtom",
   default: new Map(),
 });
 
 export const isModalOpenState = atom({
-  key: "isModalOpen",
+  key: "isModalOpenAtom",
   default: false,
 });
 
 export const groupUsersState = atom({
-  key: "groupUsers",
+  key: "groupUsersAtom",
   default: [],
 });
 
 export const usersState = atom({
-  key: "users",
+  key: "usersAtom",
   default: [],
 });
 
 export const allChatIdState = atom({
-  key: "allChatId",
+  key: "allChatIdAtom",
   default: [],
 });
 
 export const searchTermState = atom({
-  key: "searchTerm",
+  key: "searchTermAtom",
   default: "",
 });
 
 export const isGroupModalOpenState = atom({
-  key: "isGroupModalOpen",
+  key: "isGroupModalOpenAtom",
+  default: false,
+});
+
+export const tokenState = atom({
+  key: "tokenAtom",
+  default: "",
+});
+
+export const tokenLoadedState = atom({
+  key: "tokenLoadedState",
   default: false,
 });

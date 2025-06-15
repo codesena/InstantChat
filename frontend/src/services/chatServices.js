@@ -12,7 +12,5 @@ export const GroupCreation = async ({ users, groupName }) => {
     users: users,
     groupName: groupName,
   });
-  console.log(res);
-
   return res.data;
 };
