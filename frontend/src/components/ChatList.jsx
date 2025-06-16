@@ -4,6 +4,7 @@ import SearchBox from "./SearchBox.jsx";
 import UserProfilePic from "../icons/UserProfilePic.jsx";
 import { fetchAllChatId, fetchUsers } from "../services/userServices.jsx";
 import NewChatIconWork from "./NewChatIconWork.jsx";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import NewChatModal from "./NewChatModal.jsx";
 import { fetchChatsbyId } from "../services/chatServices.js";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -12,17 +13,23 @@ import {
   chatsState,
   isModalOpenState,
   isValidChatIdState,
+  openMobileSettingModalState,
   searchTermState,
   selectedProfileState,
   tokenState,
   usersState,
 } from "../states/atoms.jsx";
 import NewGroupChatModal from "./NewGroupChatModal.jsx";
+import MobileSettingModal from "./MobileSettingModal.jsx";
 
 const ChatList = () => {
   const [selectedProfile, setSelectedProfile] =
     useRecoilState(selectedProfileState);
   const setIsValidChatId = useSetRecoilState(isValidChatIdState);
+  const [openMobileSettingModal, setOpenMobileSettingModal] = useRecoilState(
+    openMobileSettingModalState
+  );
+
   const [chats, setChats] = useRecoilState(chatsState);
   const setUsers = useSetRecoilState(usersState);
   const [allChatId, setAllChatId] = useRecoilState(allChatIdState);
@@ -79,10 +86,25 @@ const ChatList = () => {
         <div className="text-white text-xl font-bold tracking-wide">
           InstantChat
         </div>
-        <div className="relative group">
-          <NewChatIconWork onClick={openNewChatModal} />
-          <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-20 text-center bg-black text-xs text-white rounded-md py-1 px-2 border border-gray-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-            New Chat
+        <div className="flex flex-row justify-center  items-center gap-3">
+          <div className="relative group">
+            <NewChatIconWork onClick={openNewChatModal} />
+            <div className="absolute top-6 -right-6  mb-2 w-20 text-center bg-gray-950 text-xs text-white rounded-md py-1 px-2 border border-gray-700 opacity-0 group-hover:opacity-90 transition-opacity duration-300 z-10">
+              New Chat
+            </div>
+          </div>
+
+          <div className="relative group hidden [@media(max-width:400px)]:block">
+            <BsThreeDotsVertical
+              size={18}
+              onClick={() => setOpenMobileSettingModal(true)}
+            />
+
+            {openMobileSettingModal && (
+              <div className="absolute top-5 -right-3 bg-[#1e1e1e] text-white rounded-md z-20 shadow-lg">
+                <MobileSettingModal />
+              </div>
+            )}
           </div>
         </div>
       </div>

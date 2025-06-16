@@ -83,3 +83,8 @@ export const openProfileState = atom({
   key: "openProfileAtom",
   default: false,
 });
+
+export const openMobileSettingModalState = atom({
+  key: "openMobileSettingModalAtom",
+  default: false,
+});
