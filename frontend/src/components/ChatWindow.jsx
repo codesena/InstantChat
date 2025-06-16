@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import InputBox from "./InputBox.jsx";
 import socket from "../services/Socket.jsx";
 import { jwtDecode } from "jwt-decode";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useResetRecoilState } from "recoil";
 import {
   chatsState,
   isValidChatIdState,
@@ -10,14 +10,16 @@ import {
   selectedUserIdState,
 } from "../states/atoms.jsx";
 import UserProfilePic from "../icons/UserProfilePic.jsx";
+import { FaArrowLeft } from "react-icons/fa6";
 
 const ChatWindow = () => {
   const [selectedProfile, setSelectedProfile] =
     useRecoilState(selectedProfileState);
-  const selectedUserId = useRecoilValue(selectedUserIdState);
+  const [selectedUserId, setSelectedUserId] =
+    useRecoilState(selectedUserIdState);
   const [isValidChatId, setIsValidChatId] = useRecoilState(isValidChatIdState);
   const [chats, setChats] = useRecoilState(chatsState);
-
+  const resetSelectedProfile = useResetRecoilState(selectedProfileState);
   const token = localStorage.getItem("token");
   const senderId = jwtDecode(token).userId;
   const messagesEndRef = useRef(null);
@@ -83,8 +85,18 @@ const ChatWindow = () => {
 
   return (
     <div className="h-screen bg-[#1f1f1f] flex flex-col">
-      <div className="flex items-center gap-4 px-6 bg-[#181818] h-[72px] border-b border-[#2e2e2e] shadow-sm">
+      <div className="flex items-center gap-4 px-4 bg-[#181818] h-[72px] border-b border-[#2e2e2e] shadow-sm">
         <div className="flex items-center">
+          {
+            <FaArrowLeft
+              size={20}
+              onClick={() => {
+                resetSelectedProfile();
+                setSelectedUserId(null);
+              }}
+              className=" mr-2 block sm:hidden"
+            />
+          }
           {selectedProfile.profileUrl ? (
             <img
               src={selectedProfile.profileUrl}

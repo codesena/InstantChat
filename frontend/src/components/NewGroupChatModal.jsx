@@ -10,7 +10,7 @@ import {
   chatsState,
   groupUsersState,
   isGroupModalOpenState,
-  isModalOpenState,
+  isChatWindowModalOpenState,
   isValidChatIdState,
   selectedProfileState,
   usersState,
@@ -25,7 +25,9 @@ const NewGroupChatModal = () => {
   const setSelectedProfile = useSetRecoilState(selectedProfileState);
   const setChats = useSetRecoilState(chatsState);
   const setIsValidChatId = useSetRecoilState(isValidChatIdState);
-  const setIsModalOpen = useSetRecoilState(isModalOpenState);
+  const setIsChatWindowModalOpen = useSetRecoilState(
+    isChatWindowModalOpenState
+  );
   const users = useRecoilValue(usersState);
 
   const [groupUsers, setGroupUsers] = useRecoilState(groupUsersState);
@@ -73,8 +75,8 @@ const NewGroupChatModal = () => {
     setShowCreateGroup(false);
     setShowNext(false);
     setIsGroupModalOpen(false);
-    setIsModalOpen(true);
-  }, [setIsGroupModalOpen, setIsModalOpen]);
+    setIsChatWindowModalOpen(true);
+  }, [setIsGroupModalOpen, setIsChatWindowModalOpen]);
 
   const filteredUsers = useMemo(() => {
     return users
@@ -96,7 +98,7 @@ const NewGroupChatModal = () => {
                 className="hover:cursor-pointer"
                 onClick={() => {
                   setIsGroupModalOpen(false);
-                  setIsModalOpen(true);
+                  setIsChatWindowModalOpen(true);
                   setShowCreateGroup(false);
                 }}
               >
@@ -156,7 +158,7 @@ const NewGroupChatModal = () => {
                   onClick={async () => {
                     const res = await createGroup({ users: groupUsers });
                     setShowCreateGroup(false);
-                    setIsModalOpen(false);
+                    setIsChatWindowModalOpen(false);
                     setIsValidChatId(true);
                     setIsGroupModalOpen(false);
                     setSelectedProfile((prev) => ({

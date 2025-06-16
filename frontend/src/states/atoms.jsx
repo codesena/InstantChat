@@ -34,7 +34,7 @@ export const chatsState = atom({
   default: new Map(),
 });
 
-export const isModalOpenState = atom({
+export const isChatWindowModalOpenState = atom({
   key: "isModalOpenAtom",
   default: false,
 });

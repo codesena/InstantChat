@@ -8,8 +8,8 @@ import {
   allChatIdState,
   chatsState,
   groupUsersState,
+  isChatWindowModalOpenState,
   isGroupModalOpenState,
-  isModalOpenState,
   isValidChatIdState,
   loggedInUserState,
   selectedProfileState,
@@ -26,14 +26,16 @@ const NewChatModal = () => {
   const setIsValidChatId = useSetRecoilState(isValidChatIdState);
   const setIsGroupModalOpen = useSetRecoilState(isGroupModalOpenState);
   const setGroupUsers = useSetRecoilState(groupUsersState);
-  const [isModalOpen, setIsModalOpen] = useRecoilState(isModalOpenState);
+  const [isChatWindowModalOpen, setIsChatWindowModalOpen] = useRecoilState(
+    isChatWindowModalOpenState
+  );
   const setSelectedProfile = useSetRecoilState(selectedProfileState);
   const loggedInUser = useRecoilValue(loggedInUserState);
 
   const isChatIdPresent = useCallback(
     async (user) => {
       setSelectedUserId(user._id);
-      setIsModalOpen(false);
+      setIsChatWindowModalOpen(false);
       setSelectedProfile((prev) => ({
         ...prev,
         profileName: user.name,
@@ -70,7 +72,7 @@ const NewChatModal = () => {
     [
       allChatId,
       setChats,
-      setIsModalOpen,
+      setIsChatWindowModalOpen,
       setIsValidChatId,
       setSelectedProfile,
       setSelectedUserId,
@@ -86,12 +88,12 @@ const NewChatModal = () => {
 
   return (
     <>
-      {isModalOpen && (
+      {isChatWindowModalOpen && (
         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
           <div className="bg-[#242424] rounded-xl p-6 w-80 shadow-lg relative">
             <div className="flex flex-row justify-between text-xl font-bold mb-3">
               <div>New Chat</div>
-              <button onClick={() => setIsModalOpen(false)}>
+              <button onClick={() => setIsChatWindowModalOpen(false)}>
                 <IoCloseCircleOutline />
               </button>
             </div>
@@ -107,7 +109,7 @@ const NewChatModal = () => {
               <li
                 className="flex flex-row gap-2 items-center p-2 rounded hover:bg-[#383838] cursor-pointer"
                 onClick={() => {
-                  setIsModalOpen(false);
+                  setIsChatWindowModalOpen(false);
                   setIsGroupModalOpen(true);
                   setGroupUsers([]);
                 }}

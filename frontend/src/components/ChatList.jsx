@@ -11,7 +11,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   allChatIdState,
   chatsState,
-  isModalOpenState,
+  isChatWindowModalOpenState,
   isValidChatIdState,
   openMobileSettingModalState,
   searchTermState,
@@ -34,7 +34,9 @@ const ChatList = () => {
   const setUsers = useSetRecoilState(usersState);
   const [allChatId, setAllChatId] = useRecoilState(allChatIdState);
   const [searchTerm, setSearchTerm] = useRecoilState(searchTermState);
-  const setIsModalOpen = useSetRecoilState(isModalOpenState);
+  const setIsChatWindowModalOpen = useSetRecoilState(
+    isChatWindowModalOpenState
+  );
   const token = useRecoilValue(tokenState);
   const senderId = jwtDecode(token)?.userId;
 
@@ -77,7 +79,7 @@ const ChatList = () => {
 
   const openNewChatModal = async () => {
     getUsers();
-    setIsModalOpen(true);
+    setIsChatWindowModalOpen(true);
   };
 
   return (
