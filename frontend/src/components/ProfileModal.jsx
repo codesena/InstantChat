@@ -1,6 +1,7 @@
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
   loggedInUserState,
+  openMobileSettingModalState,
   openProfileState,
   openSettingState,
 } from "../states/atoms.jsx";
@@ -10,6 +11,10 @@ import { useState } from "react";
 const ProfileModal = () => {
   const setOpenSetting = useSetRecoilState(openSettingState);
   const setOpenProfile = useSetRecoilState(openProfileState);
+  const setOpenMobileSettingModal = useSetRecoilState(
+    openMobileSettingModalState
+  );
+
   const loggedInUser = useRecoilValue(loggedInUserState);
   const [showFullImage, setShowFullImage] = useState(false);
 
@@ -36,7 +41,11 @@ const ProfileModal = () => {
       <button
         onClick={() => {
           setOpenProfile(false);
-          setOpenSetting(true);
+          if (window.innerWidth > 400) {
+            setOpenSetting(true);
+          } else {
+            setOpenMobileSettingModal(true);
+          }
         }}
         className="mb-4 text-gray-400 hover:text-white transition-all"
       >
