@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Navigation from "./Navigation.jsx";
 import ChatList from "./ChatList.jsx";
 import ChatWindow from "./ChatWindow.jsx";
@@ -15,6 +15,8 @@ import ProfileModal from "./ProfileModal.jsx";
 
 const Layout = () => {
   const [chatlistWidth, setChatlistWidth] = useState(250);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
   const [isDragging, setIsDragging] = useState(false);
   const isResizing = useRef(false);
   const selectedUserId = useRecoilValue(selectedUserIdState);
@@ -43,6 +45,11 @@ const Layout = () => {
     }
   };
 
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   return (
     <div
       className="flex h-screen bg-[#0f0f0f] text-white overflow-hidden"
@@ -92,7 +99,12 @@ const Layout = () => {
         )}
       </div>
 
-      {openSetting && <SettingsModal />}
+      {openSetting && (
+        <div className={`${windowWidth > 400 ? "block" : "hidden"}`}>
+          <SettingsModal />
+        </div>
+      )}
+
       {openProfile && <ProfileModal />}
     </div>
   );
