@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import InputBox from "./InputBox.jsx";
 import socket from "../services/Socket.jsx";
 import { jwtDecode } from "jwt-decode";
@@ -12,7 +12,7 @@ import {
 import UserProfilePic from "../icons/UserProfilePic.jsx";
 import { FaArrowLeft } from "react-icons/fa6";
 
-const ChatWindow = () => {
+export default function ChatWindow() {
   const [selectedProfile, setSelectedProfile] =
     useRecoilState(selectedProfileState);
   const [selectedUserId, setSelectedUserId] =
@@ -23,6 +23,9 @@ const ChatWindow = () => {
   const token = localStorage.getItem("token");
   const senderId = jwtDecode(token).userId;
   const messagesEndRef = useRef(null);
+  const topRef = useRef(null);
+  const bottomRef = useRef(null);
+  const [middleHeight, setMiddleHeight] = useState(0);
 
   const sendMessage = (message) => {
     const _id = Date.now().toString();
@@ -80,77 +83,113 @@ const ChatWindow = () => {
   });
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chats]);
+    const timeout = setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }, 100);
+
+    return () => clearTimeout(timeout);
+  }, [chats, middleHeight]);
+
+  const updateHeight = () => {
+    const topH = topRef.current?.offsetHeight || 0;
+    const bottomH = bottomRef.current?.offsetHeight || 0;
+    const viewportHeight = window.visualViewport?.height || window.innerHeight;
+    const available = viewportHeight - topH - bottomH;
+    setMiddleHeight(available);
+  };
+
+  useEffect(() => {
+    updateHeight();
+    window.visualViewport?.addEventListener("resize", updateHeight);
+    window.addEventListener("resize", updateHeight);
+    return () => {
+      window.visualViewport?.removeEventListener("resize", updateHeight);
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, []);
 
   return (
     <div className="h-screen bg-[#1f1f1f] flex flex-col">
-      <div className="flex items-center gap-4 px-4 bg-[#181818] h-[72px] border-b border-[#2e2e2e] shadow-sm">
-        <div className="flex items-center">
-          {
-            <FaArrowLeft
-              size={20}
-              onClick={() => {
-                resetSelectedProfile();
-                setSelectedUserId(null);
-              }}
-              className=" mr-2 block sm:hidden"
-            />
-          }
-          {selectedProfile.profileUrl ? (
-            <img
-              src={selectedProfile.profileUrl}
-              alt="Avatar"
-              className="w-10 h-10 rounded-full object-cover border border-gray-600"
-            />
-          ) : (
-            <UserProfilePic size="36" />
-          )}
+      <div className="flex flex-col w-full  bg-[#1f1f1f]">
+        <div
+          ref={topRef}
+          className="flex items-center gap-4 px-4 bg-[#181818] h-[72px] border-b border-[#2e2e2e] shadow-sm"
+        >
+          <div className="flex items-center">
+            {
+              <FaArrowLeft
+                size={20}
+                onClick={() => {
+                  resetSelectedProfile();
+                  setSelectedUserId(null);
+                }}
+                className=" mr-2 block sm:hidden"
+              />
+            }
+            {selectedProfile.profileUrl ? (
+              <img
+                src={selectedProfile.profileUrl}
+                alt="Avatar"
+                className="w-10 h-10 rounded-full object-cover border border-gray-600"
+              />
+            ) : (
+              <UserProfilePic size="36" />
+            )}
+          </div>
+          <div className="text-white text-lg font-semibold truncate max-w-[70%]">
+            {selectedProfile.profileName}
+          </div>
         </div>
-        <div className="text-white text-lg font-semibold truncate max-w-[70%]">
-          {selectedProfile.profileName}
-        </div>
-      </div>
 
-      <div
-        className="flex-grow overflow-y-auto px-6 py-2 scrollbar-thin scrollbar-thumb-[#333] scrollbar-track-transparent"
-        style={{ height: "calc(100vh - 72px - 60px)" }}
-      >
-        {[...chats.values()].map(
-          ({ _id, senderId: sender, chatId: currentChatId, text, createdAt }) =>
-            selectedProfile?.chatId === currentChatId && (
-              <div
-                key={_id}
-                className={`mb-2 ${
-                  sender === senderId ? "text-right" : "text-left"
-                }`}
-              >
+        <div
+          style={{ height: middleHeight }}
+          className="overflow-auto px-6 py-2 scrollbar-thin scrollbar-thumb-[#333] scrollbar-track-transparent"
+        >
+          {[...chats.values()].map(
+            ({
+              _id,
+              senderId: sender,
+              chatId: currentChatId,
+              text,
+              createdAt,
+            }) =>
+              selectedProfile?.chatId === currentChatId && (
                 <div
-                  className={`inline-block px-4 py-2 rounded-2xl max-w-[75%] break-words text-sm ${
-                    sender === senderId
-                      ? "bg-[#00483a] text-white"
-                      : "bg-[#2e2e2e] text-gray-200"
+                  key={_id}
+                  className={`mb-2 ${
+                    sender === senderId ? "text-right" : "text-left"
                   }`}
                 >
-                  <div>{text}</div>
-                  <div className="text-[11px] mt-1 text-gray-400 text-right">
-                    {new Date(createdAt).toLocaleTimeString([], {
-                      hour: "numeric",
-                      minute: "2-digit",
-                    })}
+                  <div
+                    className={`inline-block px-4 py-2 rounded-2xl max-w-[75%] break-words text-sm ${
+                      sender === senderId
+                        ? "bg-[#00483a] text-white"
+                        : "bg-[#2e2e2e] text-gray-200"
+                    }`}
+                  >
+                    <div>{text}</div>
+                    <div className="text-[11px] mt-1 text-gray-400 text-right">
+                      {new Date(createdAt).toLocaleTimeString([], {
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )
-        )}
-        <div ref={messagesEndRef} />
-      </div>
+              )
+          )}
+          <div ref={messagesEndRef} />
+        </div>
 
-      <div className="h-[60px] bg-[#2c2c2c] px-4 py-2 border-t border-[#2e2e2e]">
-        <InputBox onSend={sendMessage} />
+        <div ref={bottomRef} className=" w-full ">
+          <div className="h-[60px] bg-[#2c2c2c] px-4 py-2 border-t border-[#2e2e2e]">
+            <InputBox onSend={sendMessage} />
+          </div>
+        </div>
       </div>
     </div>
   );
-};
-
-export default ChatWindow;
+}
