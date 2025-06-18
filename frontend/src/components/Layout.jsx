@@ -105,7 +105,16 @@ const Layout = () => {
         </div>
       )}
 
-      {openProfile && <ProfileModal />}
+      {openProfile && (
+        <>
+          <div className="fixed inset-0 z-20 flex justify-center items-center sm:hidden">
+            <ProfileModal  />
+          </div>
+          <div className="hidden sm:block fixed bottom-4 left-4 z-20">
+            <ProfileModal />
+          </div>
+        </>
+      )}
     </div>
   );
 };

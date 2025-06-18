@@ -12,6 +12,7 @@ import {
 import UserProfilePic from "../icons/UserProfilePic.jsx";
 import { FaArrowLeft } from "react-icons/fa6";
 import SendButton from "./SendButton.jsx";
+import ProfileModal from "./ProfileModal.jsx";
 
 export default function ChatWindow() {
   const [selectedProfile, setSelectedProfile] =
@@ -28,6 +29,7 @@ export default function ChatWindow() {
   const bottomRef = useRef(null);
   const [middleHeight, setMiddleHeight] = useState(0);
   const inputBoxRef = useRef();
+  // const [isProfileImageOpen, setIsProfileImageOpen] = useState(false);
 
   function sendMessage() {
     let message = inputBoxRef.current?.value;
@@ -135,21 +137,25 @@ export default function ChatWindow() {
                 className=" mr-2 block sm:hidden"
               />
             }
-            {selectedProfile.profileUrl ? (
-              <img
-                src={selectedProfile.profileUrl}
-                alt="Avatar"
-                className="w-10 h-10 rounded-full object-cover border border-gray-600"
-              />
-            ) : (
-              <UserProfilePic size="36" />
-            )}
-          </div>
+            {/* <div onClick={() => setIsProfileImageOpen(true) }> */}
+              {selectedProfile.profileUrl ? (
+                <img
+                  src={selectedProfile.profileUrl}
+                  alt="Avatar"
+                  className="w-10 h-10 rounded-full object-cover border border-gray-600"
+                />
+              ) : (
+                <UserProfilePic size="36" />
+              )}
+            </div>
+          {/* </div> */}
           <div className="text-white text-lg font-semibold truncate max-w-[70%]">
             {selectedProfile.profileName}
           </div>
         </div>
-
+         {/* {isProfileImageOpen &&<div>
+          <ProfileModal/>
+          </div>} */}
         <div
           style={{ height: middleHeight }}
           className="overflow-auto px-6 py-2 scrollbar-thin scrollbar-thumb-[#333] scrollbar-track-transparent"

@@ -15,6 +15,7 @@ export const selectedProfileState = atom({
   default: {
     profileName: "",
     profileUrl: "",
+    emailId: "",
     chatId: "",
   },
 });

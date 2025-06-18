@@ -144,6 +144,7 @@ const ChatList = () => {
                     src={i.profileUrl}
                     alt="Avatar"
                     className="w-10 h-10 rounded-full object-cover border border-gray-600"
+                    onClick={() => null}
                   />
                 ) : (
                   <UserProfilePic />

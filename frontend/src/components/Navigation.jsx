@@ -7,11 +7,16 @@ import { CiSettings } from "react-icons/ci";
 import UserProfilePic from "../icons/UserProfilePic.jsx";
 import { loggedInUserDetails } from "../services/userServices.jsx";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { loggedInUserState, openSettingState } from "../states/atoms.jsx";
+import {
+  loggedInUserState,
+  openProfileState,
+  openSettingState,
+} from "../states/atoms.jsx";
 
 const Navigation = () => {
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
   const setOpenSetting = useSetRecoilState(openSettingState);
+  const setOpenProfile = useSetRecoilState(openProfileState);
   useEffect(() => {
     const fetchUserDetails = async () => {
       const user = await loggedInUserDetails();
@@ -42,15 +47,23 @@ const Navigation = () => {
             />
           }
         />
-        {loggedInUser.profileUrl ? (
-          <img
-            src={loggedInUser.profileUrl}
-            alt="Avatar"
-            className="w-8 h-8 rounded-full object-cover border border-gray-500"
-          />
-        ) : (
-          <UserProfilePic size="32" />
-        )}
+
+        <div
+          onClick={() => {
+            setOpenProfile(true);
+            setOpenSetting(false);
+          }}
+        >
+          {loggedInUser.profileUrl ? (
+            <img
+              src={loggedInUser.profileUrl}
+              alt="Avatar"
+              className="w-8 h-8 rounded-full object-cover border border-gray-500"
+            />
+          ) : (
+            <UserProfilePic size="32" />
+          )}
+        </div>
       </div>
     </div>
   );
