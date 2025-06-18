@@ -1,22 +1,14 @@
-import React, { useRef } from "react";
-const InputBox = ({ onSend }) => {
-  const inputRef = useRef();
+export default function InputBox({ sendMessage, inputBoxRef }) {
   const handleKeyPress = (e) => {
-    if (e.key === "Enter" && inputRef.current.value) {
-      if (inputRef.current.value.trim()) onSend(inputRef.current.value.trim());
-      inputRef.current.value = "";
-    }
+    if (e.key === "Enter") sendMessage();
   };
   return (
-    <>
-      <input
-        placeholder="Type a message"
-        ref={inputRef}
-        onKeyDown={handleKeyPress}
-        className="w-full outline-none justify-between  p-2 pl-8 mb-2 "
-      />
-    </>
+    <input
+      ref={inputBoxRef}
+      type="text"
+      placeholder="Type a message"
+      onKeyDown={handleKeyPress}
+      className="w-full outline-none p-3 bg-transparent text-white"
+    />
   );
-};
-
-export default InputBox;
+}

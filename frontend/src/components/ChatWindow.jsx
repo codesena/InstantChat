@@ -11,6 +11,7 @@ import {
 } from "../states/atoms.jsx";
 import UserProfilePic from "../icons/UserProfilePic.jsx";
 import { FaArrowLeft } from "react-icons/fa6";
+import SendButton from "./SendButton.jsx";
 
 export default function ChatWindow() {
   const [selectedProfile, setSelectedProfile] =
@@ -26,8 +27,13 @@ export default function ChatWindow() {
   const topRef = useRef(null);
   const bottomRef = useRef(null);
   const [middleHeight, setMiddleHeight] = useState(0);
+  const inputBoxRef = useRef();
 
-  const sendMessage = (message) => {
+  function sendMessage() {
+    let message = inputBoxRef.current?.value;
+    inputBoxRef.current.value = "";
+    inputBoxRef.current?.focus();
+    if (!message.trim()) return;
     const _id = Date.now().toString();
     const newMessage = {
       _id,
@@ -46,7 +52,7 @@ export default function ChatWindow() {
     });
 
     socket.emit("message", newMessage);
-  };
+  }
 
   useEffect(() => {
     const handleErrorMessage = (data) => {
@@ -185,9 +191,13 @@ export default function ChatWindow() {
         </div>
 
         <div ref={bottomRef} className=" w-full ">
-          <div className="h-[60px] bg-[#2c2c2c] px-4 py-2 border-t border-[#2e2e2e]">
-            <InputBox onSend={sendMessage} />
-          </div>
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            className="flex justify-between items-center p-3 h-[60px]  m-3 bg-[#2c2c2c]  border border-[#2e2e2e] rounded-full overflow-clip "
+          >
+            <InputBox inputBoxRef={inputBoxRef} sendMessage={sendMessage} />
+            <SendButton onClick={sendMessage} />
+          </form>
         </div>
       </div>
     </div>
