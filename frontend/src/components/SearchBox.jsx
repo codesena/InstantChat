@@ -5,13 +5,14 @@ const SearchBox = ({
   id,
   onChange,
   placeholder = "Search or Start a New Chat",
+  width=90
 }) => {
   return (
     <input
       type="text"
       id={id}
       placeholder={placeholder}
-      className="px-2.5 bg-[#303030] w-[90%] h-10 rounded-xl outline-none"
+      className={`px-2.5 text-center bg-[#242424] w-[${width}%] h-10 rounded-xl outline-none`}
       value={value}
       onChange={onChange}
       autoComplete="off"

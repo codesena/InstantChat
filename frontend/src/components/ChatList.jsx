@@ -114,11 +114,12 @@ const ChatList = () => {
       <NewChatModal />
       <NewGroupChatModal />
 
-      <div className="px-4 py-2">
+      <div className="flex flex-col items-center w-auto px-2 py-2 text-center">
         <SearchBox
           id="ChatlistSearchBox"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          width={100}
         />
       </div>
 

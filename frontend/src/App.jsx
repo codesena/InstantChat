@@ -10,7 +10,7 @@ import SignIn from "./pages/SignIn.jsx";
 import ProtectedRoute from "./services/ProtectedRoute.jsx";
 import { ErrorBoundary } from "react-error-boundary";
 import { Analytics } from "@vercel/analytics/react";
-
+import './App.css'
 function ErrorFallback({ error }) {
   return <div>Something went wrong: {error.message}</div>;
 }
