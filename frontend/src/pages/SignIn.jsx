@@ -9,15 +9,21 @@ function SignIn() {
     email: "",
     password: "",
   });
+  const [errorMessage, setErrorMessage] = useState(null);
   const setToken = useSetRecoilState(tokenState);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
+    if (errorMessage) {
+      setErrorMessage(null);
+    }
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+    setErrorMessage(null);
+
     try {
       if (formData.email && formData.password) {
         const res = await loginUser(formData);
@@ -26,10 +32,31 @@ function SignIn() {
         localStorage.setItem("token", token);
         navigate("/app");
       } else {
-        alert("Enter all the details");
+        setErrorMessage("Please enter both email and password.");
       }
     } catch (error) {
-      alert(error.response?.data?.message || "SignIn failed");
+      setErrorMessage(error.response?.data?.message || "Sign in failed. Please try again.");
+    }
+  };
+
+  const handleGuestLogin = async (e) => {
+    e.preventDefault();
+    setErrorMessage(null);
+
+    const guestData = {
+      email: "guest@gmail.com",
+      password: "guest",
+    };
+
+    try {
+      const res = await loginUser(guestData);
+      const token = res.data.token;
+      setToken(token);
+      localStorage.setItem("token", token);
+      navigate("/app");
+    } catch (error) {
+      // Replaced alert
+      setErrorMessage(error.response?.data?.message || "Guest login failed. Please try again.");
     }
   };
 
@@ -39,6 +66,12 @@ function SignIn() {
         <h1 className="text-3xl font-bold text-green-400 text-center mb-6">
           InstantChat
         </h1>
+        {errorMessage && (
+          <div className="bg-red-800 border border-red-600 text-red-100 px-4 py-3 rounded-lg mb-4 text-center text-sm">
+            {errorMessage}
+          </div>
+        )}
+
         <form onSubmit={handleSignIn} className="space-y-5">
           <div>
             <label className="block mb-1">Email</label>
@@ -47,7 +80,7 @@ function SignIn() {
               value={formData.email}
               onChange={handleChange}
               type="email"
-              className="w-full border-2 outline-none px-4 py-2 rounded-lg bg-[#3b3b3b] text-white"
+              className="w-full border-2 border-[#3b3b3b] focus:border-green-500 outline-none px-4 py-2 rounded-lg bg-[#3b3b3b] text-white transition-colors duration-200"
             />
           </div>
 
@@ -58,15 +91,23 @@ function SignIn() {
               value={formData.password}
               onChange={handleChange}
               type="password"
-              className="w-full border-2 outline-none px-4 py-2 rounded-lg bg-[#3b3b3b] text-white"
+              className="w-full border-2 border-[#3b3b3b] focus:border-green-500 outline-none px-4 py-2 rounded-lg bg-[#3b3b3b] text-white transition-colors duration-200"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg text-lg font-semibold"
+            className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg text-lg font-semibold transition-colors duration-200"
           >
-            Sign In
+            Login
+          </button>
+
+          <button
+            type="button"
+            onClick={handleGuestLogin}
+            className="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-lg text-lg font-semibold transition-colors duration-200"
+          >
+            Guest Login
           </button>
 
           <div className="text-center text-sm mt-2">
@@ -89,3 +130,5 @@ function SignIn() {
 }
 
 export default SignIn;
+
+
