@@ -1,102 +1,72 @@
-# React + Vite
+# InstantChat (Frontend)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite frontend for InstantChat.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React 18, Vite
+- Tailwind CSS
+- Recoil (state)
+- Axios (REST)
+- Socket.IO client (realtime messages)
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Node.js 18+ recommended
+- npm
 
-// App Structure
-chat-app/
+## Setup
 
-backend/---> Industry level strucutre
-│── src/
-│ ├── config/ # Database and environment configurations
-│ │ ├── db.js # Database connection
-│ │ ├── env.js # Environment variables
-│ │
-│ ├── controllers/ # Handles business logic for routes
-│ │ ├── authController.js
-│ │ ├── chatController.js
-│ │ ├── groupController.js
-│ │
-│ ├── middlewares/ # Custom middleware functions
-│ │ ├── authMiddleware.js
-│ │ ├── errorMiddleware.js
-│ │
-│ ├── models/ # Database models (MongoDB or SQL)
-│ │ ├── User.js
-│ │ ├── Chat.js
-│ │ ├── Message.js
-│ │ ├── Group.js
-│ │
-│ ├── routes/ # Express routes
-│ │ ├── authRoutes.js
-│ │ ├── chatRoutes.js
-│ │ ├── groupRoutes.js
-│ │
-│ ├── services/ # Business logic and helper functions
-│ │ ├── authService.js
-│ │ ├── chatService.js
-│ │ ├── groupService.js
-│ │
-│ ├── utils/ # Utility functions
-│ │ ├── jwt.js # JWT token functions
-│ │ ├── response.js # Standardized API response format
-│ │
-│ ├── app.js # Main Express app configuration
-│ ├── server.js # Server entry point (includes Socket.IO)
-│── .env # Environment variables
-│── package.json # Dependencies and scripts
+```bash
+cd frontend
+npm install
+```
 
-│── frontend/ # React frontend
-│ ├── src/
-│ │ ├── components/ # Reusable UI components
-│ │ ├── pages/ # Page-level components
-│ │ ├── hooks/ # Custom React hooks
-│ │ ├── contexts/ # Context API for state management
-│ │ ├── services/ # API calls (Axios/Fetch)
-│ │ ├── styles/ # Tailwind CSS styles
-│ │ ├── App.js # Main component
-│ │ ├── main.jsx # Entry point
-│ ├── public/
-│ ├── .env # Environment variables
-│ ├── vite.config.js # Vite configuration
-│── .gitignore
-│── package.json
-│── README.md
+## Run (Development)
 
-// Things too add
+```bash
+npm run dev
+```
 
-1. text Inside svg
-2. tick functionality
-3. user name overflow then it will be ... in the chatlist section also with the new message// done
-4. last message to be shown all the time // Done
-5. Date /time when last messge was sent should be there in chatlist
-6. Chatlist width should be fixed and will expand after md of slighlty more an take 1/4 of thw width on mobile devices make it work too
-7. Open profile name should be ... when size is less than its width //done
-8. Selected profile color needs to be changed to 303030 from 474747// done
-9. Large messages taking right side width also limit it to some extent so that it does not occupirs right side length //done
-11. Horizotal sloder arrives when a particular text chat is too long //done
-12. On Zooming Zomm like whatsapp that one words and theri component gets zommed not all the thig
-13. Self message Issue. correct it// done
-14. group name not showing// done
-15. onclick create close all modal open the new group.// done
-16. On unselect all the users event hen the next options appears //Done
-17. select current group id //done
-18. Fix min width of chatlist //done
-19. ongoing back from create option show just prevois one modal not the newchat modal
-20. 
+Vite prints the local URL in the terminal (typically `http://localhost:5173`).
 
-// tomorrow Backend in the morning
+## Scripts
 
-1. Why user in verification of token of user inside token
-2. What to do with the response of the after storing the message in the databse in socket section //Done
-3. Real time typing update
-4. Update particular chat id with the new message by the particular person in the chat list section. No need to add message at the cht window just update it in the backend and emit to frontend in the chat list.//Done
-5.
+- `npm run dev` — start Vite dev server
+- `npm run build` — production build
+- `npm run preview` — preview the production build
+- `npm run lint` — run ESLint
+
+## Backend / API Configuration
+
+This repo currently points the frontend to a hosted backend by default:
+
+- REST base URL: `frontend/src/services/api.jsx`
+- Socket server URL: `frontend/src/services/Socket.jsx`
+
+If you want to run the backend locally, update both URLs to your local server, for example:
+
+- `http://localhost:5000/api/v1` (REST)
+- `http://localhost:5000` (Socket)
+
+Note: the current implementation does not use `VITE_*` environment variables for these URLs.
+
+## Auth (How it works)
+
+- After successful signin, the app stores the JWT in `localStorage` under `token`.
+- Axios adds `Authorization: <token>` to every request via an interceptor.
+- Socket.IO sends the token in the handshake payload (`auth.token`).
+
+## Image Uploads (Cloudinary)
+
+Profile image upload uses Cloudinary from the browser:
+
+- `frontend/src/services/cloudinaryUrl.js`
+
+If you want to use your own Cloudinary account, change `cloud_name`, `upload_preset`, and the upload URL.
+
+## Troubleshooting
+
+- **401 / Authentication error**: confirm you have a valid `token` in `localStorage` and that the backend JWT secret matches the token issuer.
+- **CORS issues**: backend currently allows `origin: "*"` for Socket.IO and enables `cors()` for Express.
+- **Running local backend but frontend still hits hosted API**: update both `api.jsx` and `Socket.jsx` URLs.
